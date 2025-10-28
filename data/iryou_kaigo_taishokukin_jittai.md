@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <!-- Chosen Palette: Calm Stone/Emerald -->
-    <!-- Application Structure Plan: A dashboard-style, tabbed interface. This is more effective for this dense, data-heavy report than a long scrolling page. Tabs: 1. 概要 (Overview): Key stats (75.5% adoption), Doughnut chart for Table 1 (Adoption types), and key takeaways. 2. 勤続年数別・相場 (Pay Scale by Service Length): The core interactive element. A dropdown filter will allow users to select a dataset ("業界全体", "公的病院", "自己都合") which dynamically updates a Chart.js bar chart showing pay scales by service length. This combines three static tables (2A, 2B, 2C) into one interactive visualization. 3. 考察・戦略 (Analysis & Strategy): Presents the qualitative insights from Sections 3 & 4 as clean, readable cards. This structure separates the high-level summary, the deep-dive data, and the strategic analysis into logical, user-selectable sections. -->
+    <!-- Application Structure Plan: A dashboard-style, tabbed interface. This is more effective for this dense, data-heavy report than a long scrolling page. Tabs: 1. 概要 (Overview): Key stats (75.5% adoption), Doughnut chart for Table 1 (Adoption types), and key takeaways. 2. 勤続年数別・相場 (Pay Scale by Service Length): The core interactive element. A dropdown filter will allow users to select a dataset ("業界全体", "公的病院", "自己都合") which dynamically updates a Chart.js bar chart showing pay scales by service length. This combines three static tables (2A, 2B, 2C) into one dynamic, explorable tool, making comparison far easier for the user. 3. 考察・戦略 (Analysis & Strategy): Presents the qualitative insights from Sections 3 & 4 as clean, readable cards, now including specific compensation data (originally in the external file). This structure separates the high-level summary, the deep-dive data, and the strategic analysis into logical, user-selectable sections. -->
     <!-- Visualization & Content Choices: Table 1 (Adoption %) -> Goal: Inform proportion -> Viz: Doughnut Chart (Chart.js/Canvas) -> Interaction: Tooltips on hover -> Justification: Better than a table for showing parts of a whole (75.5% vs 24.5%). Tables 2A, 2B, 2C (Pay Scales) -> Goal: Compare pay across sectors and tenure -> Viz: Interactive Bar Chart (Chart.js/Canvas) -> Interaction: Dropdown <select> element updates chart data -> Justification: Combines 3 static tables into one dynamic, explorable tool, making comparison far easier for the user. Sections 3 & 4 (Text Analysis) -> Goal: Inform strategic takeaways -> Viz: Styled cards (HTML/Tailwind) -> Justification: Clear, scannable presentation of key findings. -->
     <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
     <style>
@@ -134,7 +134,31 @@
             <p class="text-base text-stone-700 mb-6">これらのデータを踏まえ、自院の制度を見直す際の戦略的な視点を整理します。</p>
             
             <div class="space-y-6">
-                <!-- Impact Cards -->
+                <!-- NEW SECTION: Specific Compensation Data -->
+                <div class="bg-white p-6 rounded-lg shadow-xl border border-red-400">
+                    <h3 class="text-xl font-bold text-red-700 mb-3">【参考】公的病院の具体的な退職金水準（看護職など）</h3>
+                    <p class="text-sm text-stone-600 mb-4">公的病院（国立病院機構、公立病院など）は、一般的に退職金水準が高く、目標設定の参考になります。（金額はモデルケースに基づく概算です）</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="space-y-2">
+                            <h4 class="font-semibold text-base text-stone-800 border-b pb-1">国立病院機構（NHO）モデル</h4>
+                            <ul class="list-disc list-inside ml-4 text-sm text-stone-700">
+                                <li>**勤続10年（自己都合）**: 約160万円</li>
+                                <li>**勤続20年（自己都合）**: 約400万円</li>
+                                <li>**定年退職（勤続30年）**: 約2,000万円</li>
+                            </ul>
+                        </div>
+                        <div class="space-y-2">
+                            <h4 class="font-semibold text-base text-stone-800 border-b pb-1">公立病院モデル（地方公務員準拠）</h4>
+                            <ul class="list-disc list-inside ml-4 text-sm text-stone-700">
+                                <li>**定年退職（勤続30年）**: 約1,400万円～1,900万円</li>
+                                <li>**公立病院（10年勤続）**: 約280万円</li>
+                                <li>**日本赤十字病院**：勤続1年から支給、役職により25年で2,250万円超のケースあり</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Original Strategy Cards -->
                 <div class="bg-white p-6 rounded-lg shadow-md border border-stone-200">
                     <h3 class="text-xl font-bold text-stone-800 mb-3">制度の有無と規模による影響</h3>
                     <ul class="list-disc list-inside space-y-2 text-stone-700">
