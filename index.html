@@ -1,0 +1,434 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>退職金制度の変遷と仕組み</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Calm Stone/Emerald -->
+    <!-- Application Structure Plan: A single-page scrolling application with a fixed header navigation. Key sections: Introduction, a tabbed History (Phase 1-3), a 4-column card-based comparison of main systems, an interactive Chart.js visualization comparing risk vs. certainty, and a final section on the strategic benefits of DC for medical corps. This structure allows users to get a quick overview (Intro), dive into historical context (History), compare systems directly (Comparison/Chart), and see the specific relevance (Medical Corp). -->
+    <!-- Visualization & Content Choices: Report Section 3 (Comparison Table) -> Goal: Compare risk/certainty -> Viz: Grouped Bar Chart (Chart.js/Canvas) -> Interaction: Tooltips explain values -> Justification: Visually summarizes the most critical tradeoff (who bears risk, is the payout guaranteed?) which is the core concept of DB vs. DC. Report Section 2 (History) -> Goal: Show evolution -> Viz: Tabbed Interface (HTML/JS) -> Interaction: Click tabs to show/hide content -> Justification: Breaks down dense historical info into manageable, user-selectable chunks. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        html {
+            scroll-behavior: smooth;
+        }
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 500px;
+            }
+        }
+        .tab-button.active {
+            border-bottom-color: #059669; /* emerald-600 */
+            color: #047857; /* emerald-700 */
+            font-weight: 600;
+        }
+        .tab-button {
+            border-bottom-width: 3px;
+            border-bottom-color: transparent;
+        }
+        .tab-content {
+            display: none;
+        }
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body class="bg-stone-50 text-stone-800">
+
+    <!-- Header & Navigation -->
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0">
+                    <span class="text-xl font-bold text-emerald-700">退職金制度ガイド</span>
+                </div>
+                <div class="hidden md:block">
+                    <div class="ml-10 flex items-baseline space-x-4">
+                        <a href="#section-1" class="nav-link text-stone-600 hover:text-emerald-700 px-3 py-2 rounded-md text-sm font-medium">基本</a>
+                        <a href="#section-2" class="nav-link text-stone-600 hover:text-emerald-700 px-3 py-2 rounded-md text-sm font-medium">制度の歴史</a>
+                        <a href="#section-3" class="nav-link text-stone-600 hover:text-emerald-700 px-3 py-2 rounded-md text-sm font-medium">主要制度の比較</a>
+                        <a href="#section-4" class="nav-link text-stone-600 hover:text-emerald-700 px-3 py-2 rounded-md text-sm font-medium">医療法人とDC</a>
+                    </div>
+                </div>
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="inline-flex items-center justify-center p-2 rounded-md text-stone-500 hover:text-emerald-700 hover:bg-stone-100 focus:outline-none">
+                        <svg class="h-6 w-6" stroke="currentColor" fill="none" viewBox="0 0 24 24">
+                            <path id="menu-icon-open" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+                            <path id="menu-icon-close" class="hidden" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="md:hidden hidden bg-white shadow-lg">
+            <div class="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                <a href="#section-1" class="nav-link-mobile text-stone-600 hover:bg-stone-100 hover:text-emerald-700 block px-3 py-2 rounded-md text-base font-medium">基本</a>
+                <a href="#section-2" class="nav-link-mobile text-stone-600 hover:bg-stone-100 hover:text-emerald-700 block px-3 py-2 rounded-md text-base font-medium">制度の歴史</a>
+                <a href="#section-3" class="nav-link-mobile text-stone-600 hover:bg-stone-100 hover:text-emerald-700 block px-3 py-2 rounded-md text-base font-medium">主要制度の比較</a>
+                <a href="#section-4" class="nav-link-mobile text-stone-600 hover:bg-stone-100 hover:text-emerald-700 block px-3 py-2 rounded-md text-base font-medium">医療法人とDC</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+
+        <!-- Section 1: Basic Positioning -->
+        <section id="section-1" class="my-12 pt-16 -mt-16">
+            <h2 class="text-3xl font-bold text-emerald-700 mb-6">1. 退職金制度の基本的な位置づけ</h2>
+            <p class="text-lg text-stone-700 mb-8">
+                退職金制度は、日本の雇用慣行における重要な要素です。法律上の支給義務はありませんが、多くの企業で導入されており、従業員の長期勤続や功労に対する報奨、そして高齢期の生活保障という「後払い賃金」の側面を持っています。
+            </p>
+            <div class="overflow-x-auto bg-white rounded-lg shadow-md border border-stone-200">
+                <table class="w-full min-w-max">
+                    <thead class="bg-stone-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-stone-600 uppercase tracking-wider">項目</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-stone-600 uppercase tracking-wider">詳細</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-stone-900"><strong>定義</strong></td>
+                            <td class="px-6 py-4 text-stone-700">企業が従業員の長期勤続や功労に対して支払う報奨・生活保障資金。</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-stone-900"><strong>歴史的背景</strong></td>
+                            <td class="px-6 py-4 text-stone-700">終身雇用制の維持と、高齢期の生活を支えるための「後払い賃金」としての役割。</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-stone-900"><strong>法的根拠</strong></td>
+                            <td class="px-6 py-4 text-stone-700">導入する場合、労働基準法に基づき<strong>就業規則（退職金規程）</strong>に必ず記載し、周知する義務がある。</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-stone-900"><strong>税制上の優遇</strong></td>
+                            <td class="px-6 py-4 text-stone-700">一時金で受け取る場合、「退職所得控除」により、他の所得に比べて税負担が大幅に軽減される。</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- Section 2: Historical Phases -->
+        <section id="section-2" class="my-16 pt-16 -mt-16">
+            <h2 class="text-3xl font-bold text-emerald-700 mb-6">2. 制度の歴史的変遷</h2>
+            <p class="text-lg text-stone-700 mb-8">
+                日本の退職金制度は、企業の責任と個人の責任のバランスが時代とともに大きく変化してきました。
+            </p>
+            <div class="bg-white rounded-lg shadow-md border border-stone-200">
+                <!-- Tabs -->
+                <div class="border-b border-stone-200">
+                    <nav class="flex -mb-px px-4" aria-label="Tabs">
+                        <button class="tab-button active w-1/3 py-4 px-1 text-center text-sm font-medium text-stone-500 hover:text-emerald-600" data-tab="phase-1">
+                            フェーズ1: 企業責任型
+                        </button>
+                        <button class="tab-button w-1/3 py-4 px-1 text-center text-sm font-medium text-stone-500 hover:text-emerald-600" data-tab="phase-2">
+                            フェーズ2: 制度改革
+                        </button>
+                        <button class="tab-button w-1/3 py-4 px-1 text-center text-sm font-medium text-stone-500 hover:text-emerald-600" data-tab="phase-3">
+                            フェーズ3: 個人責任強化
+                        </button>
+                    </nav>
+                </div>
+                <!-- Tab Content -->
+                <div class="p-6">
+                    <div id="phase-1" class="tab-content active">
+                        <h3 class="text-2xl font-semibold text-stone-800 mb-3">フェーズ 1: **企業責任型**の時代（～2001年頃まで）</h3>
+                        <ul class="list-disc list-inside space-y-2 text-stone-700">
+                            <li><strong>主役</strong>: <strong>退職一時金制度</strong>、<strong>厚生年金基金</strong>、<strong>適格退職年金</strong></li>
+                            <li><strong>特徴</strong>: 将来の給付額（目標額）を企業が約束し、運用リスクも企業が負う「確定給付」が中心でした。</li>
+                            <li><strong>課題</strong>: 低金利・運用難により、多くの企業で年金資産の<strong>積立不足</strong>が深刻化し、企業の財務を圧迫しました。</li>
+                        </ul>
+                    </div>
+                    <div id="phase-2" class="tab-content">
+                        <h3 class="text-2xl font-semibold text-stone-800 mb-3">フェーズ 2: **制度改革**の時代（2001年以降）</h3>
+                        <ul class="list-disc list-inside space-y-2 text-stone-700">
+                            <li><strong>主役</strong>: **確定拠出年金（DC法）**、**確定給付企業年金（DB法）**の導入。</li>
+                            <li><strong>特徴</strong>:
+                                <ul class="list-disc list-inside ml-4 mt-1">
+                                    <li><strong>DC（確定拠出型）</strong>：企業リスクを軽減するため、運用責任を個人に移す新制度が導入されました。</li>
+                                    <li><strong>DB（確定給付型）</strong>：従来の確定給付制度を法的に整備し、財務健全化を義務付けました。</li>
+                                    <li>適格退職年金は廃止され、各企業がDBまたはDCへ移行しました。</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                    <div id="phase-3" class="tab-content">
+                        <h3 class="text-2xl font-semibold text-stone-800 mb-3">フェーズ 3: **個人責任強化と選択の多様化**（現在）</h3>
+                        <ul class="list-disc list-inside space-y-2 text-stone-700">
+                            <li><strong>主役</strong>: **企業型DC**、**個人型iDeCo**（個人拠出型確定拠出年金）</li>
+                            <li><strong>特徴</strong>:
+                                <ul class="list-disc list-inside ml-4 mt-1">
+                                    <li>企業型DCは税制優遇の大きさから導入が拡大しています。</li>
+                                    <li>DBとDCを組み合わせる「ハイブリッド型」が増加しています。</li>
+                                    <li>2022年法改正により、企業型DCとiDeCoの**併用が容易**になり、個人の資産形成の選択肢が広がりました。</li>
+                                </ul>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Main System Comparison -->
+        <section id="section-3" class="my-16 pt-16 -mt-16">
+            <h2 class="text-3xl font-bold text-emerald-700 mb-6">3. 主要な退職金制度の比較</h2>
+            <p class="text-lg text-stone-700 mb-8">
+                現在の主要な制度は、「誰が運用リスクを負うか」「給付額が確定しているか」で大きく分類できます。
+            </p>
+            
+            <!-- Comparison Cards -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <!-- Card 1: 退職一時金 -->
+                <div class="bg-white rounded-lg shadow-md border border-stone-200 p-6 flex flex-col">
+                    <h3 class="text-xl font-bold text-emerald-700 mb-3">退職一時金</h3>
+                    <p class="text-sm text-stone-600 mb-4">企業内積立、退職時一括支給。</p>
+                    <div class="space-y-3 mt-auto">
+                        <div>
+                            <span class="text-xs font-semibold text-stone-500">運用の責任</span>
+                            <p class="font-medium text-stone-800">企業（法人）</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-stone-500">給付額の確定性</span>
+                            <p class="font-medium text-stone-800">確定</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 2: 確定給付企業年金 (DB) -->
+                <div class="bg-white rounded-lg shadow-md border border-stone-200 p-6 flex flex-col">
+                    <h3 class="text-xl font-bold text-emerald-700 mb-3">確定給付企業年金 (DB)</h3>
+                    <p class="text-sm text-stone-600 mb-4">企業が掛金を拠出し、外部で運用。給付額を約束。</p>
+                    <div class="space-y-3 mt-auto">
+                        <div>
+                            <span class="text-xs font-semibold text-stone-500">運用の責任</span>
+                            <p class="font-medium text-stone-800">企業（法人）</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-stone-500">給付額の確定性</span>
+                            <p class="font-medium text-stone-800">確定</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 3: 企業型確定拠出年金 (DC) -->
+                <div class="bg-white rounded-lg shadow-md border border-stone-200 p-6 flex flex-col">
+                    <h3 class="text-xl font-bold text-emerald-700 mb-3">企業型確定拠出年金 (DC)</h3>
+                    <p class="text-sm text-stone-600 mb-4">企業が掛金を拠出し、**職員自身**が運用商品を選択。</p>
+                    <div class="space-y-3 mt-auto">
+                        <div>
+                            <span class="text-xs font-semibold text-stone-500">運用の責任</span>
+                            <p class="font-medium text-red-600">職員本人</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-stone-500">給付額の確定性</span>
+                            <p class="font-medium text-red-600">変動</p>
+                        </div>
+                    </div>
+                </div>
+                <!-- Card 4: 中小企業退職金共済 (中退共) -->
+                <div class="bg-white rounded-lg shadow-md border border-stone-200 p-6 flex flex-col">
+                    <h3 class="text-xl font-bold text-emerald-700 mb-3">中小企業退職金共済 (中退共)</h3>
+                    <p class="text-sm text-stone-600 mb-4">企業が掛金を拠出し、国（機構）が運用・管理。</p>
+                    <div class="space-y-3 mt-auto">
+                        <div>
+                            <span class="text-xs font-semibold text-stone-500">運用の責任</span>
+                            <p class="font-medium text-stone-800">国（機構）</p>
+                        </div>
+                        <div>
+                            <span class="text-xs font-semibold text-stone-500">給付額の確定性</span>
+                            <p class="font-medium text-stone-800">確定</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Chart -->
+            <div class="mt-12 bg-white rounded-lg shadow-md border border-stone-200 p-6">
+                <h3 class="text-2xl font-bold text-stone-800 mb-4">インタラクティブ比較: リスクと確定性</h3>
+                <p class="text-stone-700 mb-6">
+                    下のグラフは、各制度の「運用の責任」と「給付額の確定性」を視覚的に比較したものです。<br>
+                    「運用の責任」は、**プラス（上）が企業側**、**マイナス（下）が職員側**がリスクを負うことを示します。<br>
+                    「給付額の確定性」は、**プラス（上）が確定**、**マイナス（下）が変動**することを示します。
+                </p>
+                <div class="chart-container">
+                    <canvas id="comparisonChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 4: Medical Corp & DC -->
+        <section id="section-4" class="my-16 pt-16 -mt-16">
+            <h2 class="text-3xl font-bold text-emerald-700 mb-6">4. 医療法人がDCを導入する主な戦略的背景</h2>
+            <p class="text-lg text-stone-700 mb-8">
+                特に医療法人が**確定拠出年金（DC）**を選択する傾向が強まっている背景には、法人の財務リスク軽減や職員への税制優遇など、複数の戦略的な理由があります。
+            </p>
+            <div class="overflow-x-auto bg-white rounded-lg shadow-md border border-stone-200">
+                <table class="w-full min-w-max">
+                    <thead class="bg-stone-100">
+                        <tr>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-stone-600 uppercase tracking-wider">項目</th>
+                            <th class="px-6 py-3 text-left text-xs font-semibold text-stone-600 uppercase tracking-wider">DC導入による効果</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-stone-200">
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-stone-900"><strong>財務リスクの低減</strong></td>
+                            <td class="px-6 py-4 text-stone-700">DBのような運用不足時の<strong>追加拠出義務がない</strong>ため、法人の財務が安定する。</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-stone-900"><strong>税・社会保険料の軽減</strong></td>
+                            <td class="px-6 py-4 text-stone-700">企業拠出掛金が<strong>全額損金</strong>となり、さらに「選択制」にすると職員と法人の<strong>社会保険料負担も軽減</strong>される。</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-stone-900"><strong>役員退職金対策</strong></td>
+                            <td class="px-6 py-4 text-stone-700">医療法人の役員は原則<strong>小規模企業共済に加入できない</strong>ため、DCが強力な退職金準備手段となる。</td>
+                        </tr>
+                        <tr>
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-stone-900"><strong>人材採用・定着</strong></td>
+                            <td class="px-6 py-4 text-stone-700">職員が自身の資産形成に積極的になれる<strong>「現代的な福利厚生」</strong>として、若年層へのアピールになる。</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="bg-stone-800 text-stone-300 mt-16">
+        <div class="container mx-auto px-6 py-8 text-center">
+            <p>&copy; 2025 退職金制度ガイド. このページは情報提供を目的としており、特定の金融商品を推奨するものではありません。</p>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Mobile Menu Toggle
+            const menuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+            const iconOpen = document.getElementById('menu-icon-open');
+            const iconClose = document.getElementById('menu-icon-close');
+
+            menuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+                iconOpen.classList.toggle('hidden');
+                iconClose.classList.toggle('hidden');
+            });
+
+            // Close mobile menu on link click
+            document.querySelectorAll('.nav-link-mobile').forEach(link => {
+                link.addEventListener('click', () => {
+                    mobileMenu.classList.add('hidden');
+                    iconOpen.classList.remove('hidden');
+                    iconClose.classList.add('hidden');
+                });
+            });
+            
+            // Tab Switching Logic
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabContents = document.querySelectorAll('.tab-content');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {
+                    const tabId = button.getAttribute('data-tab');
+
+                    tabButtons.forEach(btn => btn.classList.remove('active'));
+                    button.classList.add('active');
+
+                    tabContents.forEach(content => {
+                        if (content.id === tabId) {
+                            content.classList.add('active');
+                        } else {
+                            content.classList.remove('active');
+                        }
+                    });
+                });
+            });
+
+            // Chart.js Comparison Chart
+            const ctx = document.getElementById('comparisonChart').getContext('2d');
+            const comparisonChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['退職一時金', '確定給付 (DB)', '確定拠出 (DC)', '中退共'],
+                    datasets: [
+                        {
+                            label: '運用の責任',
+                            data: [10, 10, -10, 5],
+                            backgroundColor: 'rgba(5, 150, 105, 0.6)', // emerald-600
+                            borderColor: 'rgba(4, 120, 87, 1)', // emerald-700
+                            borderWidth: 1
+                        },
+                        {
+                            label: '給付額の確定性',
+                            data: [10, 10, -10, 10],
+                            backgroundColor: 'rgba(234, 179, 8, 0.6)', // yellow-500
+                            borderColor: 'rgba(202, 138, 4, 1)', // yellow-600
+                            borderWidth: 1
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            beginAtZero: false,
+                            ticks: {
+                                callback: function(value, index, values) {
+                                    if (value === 10) return '高 (企業/確定)';
+                                    if (value === 5) return '中 (国)';
+                                    if (value === -10) return '低 (職員/変動)';
+                                    return '';
+                                }
+                            }
+                        }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    const value = context.raw;
+                                    if (context.dataset.label === '運用の責任') {
+                                        if (value === 10) label += '企業（法人）';
+                                        else if (value === 5) label += '国（機構）';
+                                        else if (value === -10) label += '職員本人';
+                                    } else if (context.dataset.label === '給付額の確定性') {
+                                        if (value === 10) label += '確定';
+                                        else if (value === -10) label += '変動';
+                                    }
+                                    return label;
+                                }
+                            }
+                        },
+                        legend: {
+                            position: 'top',
+                        },
+                        title: {
+                            display: true,
+                            text: '主要4制度のリスク・確定性 マトリクス'
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
